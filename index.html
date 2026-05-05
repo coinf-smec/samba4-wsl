@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação | Servidor Samba no WSL2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #334155;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #22d3ee, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #064e3b;
+            color: #34d399;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        /* Cards e Seções */
+        .section {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #334155;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .section:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .section h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #3b82f6;
+            color: #f1f5f9;
+        }
+
+        .section h3 {
+            color: #38bdf8;
+            margin: 1rem 0 0.75rem 0;
+            font-size: 1.25rem;
+        }
+
+        .section h4 {
+            color: #94a3b8;
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1rem;
+        }
+
+        /* Código */
+        code {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            background: #0f172a;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #22d3ee;
+        }
+
+        pre {
+            background: #0f172a;
+            padding: 1rem;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 4px solid #3b82f6;
+            font-size: 0.85rem;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #e2e8f0;
+        }
+
+        /* Tabelas */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #0f172a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        th {
+            background: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #1e293b;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: #064e3b;
+            border-left-color: #10b981;
+            color: #a7f3d0;
+        }
+
+        .alert-warning {
+            background: #451a03;
+            border-left-color: #f59e0b;
+            color: #fed7aa;
+        }
+
+        .alert-danger {
+            background: #7f1d1d;
+            border-left-color: #ef4444;
+            color: #fecaca;
+        }
+
+        .alert-info {
+            background: #1e3a8a;
+            border-left-color: #3b82f6;
+            color: #bfdbfe;
+        }
+
+        /* Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        /* Steps */
+        .step {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            background: #3b82f6;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid #334155;
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        .tag {
+            background: #3b82f6;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: normal;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐧 Servidor Samba no WSL2</h1>
+            <p>Documentação completa para compartilhamento de arquivos entre Windows, Linux e rede local</p>
+            <div class="badge">✅ Versão 1.0 | Compatível com Windows 10/11 + WSL2</div>
+        </div>
+
+        <!-- Visão Geral -->
+        <div class="section">
+            <h2>📋 Visão Geral</h2>
+            <p>Este projeto configura um servidor <strong>Samba</strong> rodando dentro do <strong>WSL2 (Windows Subsystem for Linux)</strong> para compartilhar arquivos com a rede local. A solução contorna a limitação do Windows que utiliza a porta 445 (SMB) nativamente, desativando o serviço Windows e permitindo que o Samba do WSL2 assuma o controle.</p>
+            
+            <div class="grid-2">
+                <div class="alert-info" style="border-radius: 12px; padding: 1rem;">
+                    <strong>🏗️ Arquitetura da Solução</strong><br>
+                    Windows Host → WSL2 (com Samba) → Rede Local<br>
+                    <small>Porta 445 bloqueada/desativada no Windows nativo</small>
+                </div>
+                <div class="alert-success" style="border-radius: 12px; padding: 1rem;">
+                    <strong>📁 Pasta Compartilhada</strong><br>
+                    <code>C:\compartilhado</code> (Windows)<br>
+                    <code>/mnt/c/compartilhado</code> (WSL)<br>
+                    Acesso via: <code>\\127.0.0.1\compartilhado</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arquivos da Solução -->
+        <div class="section">
+            <h2>📁 Estrutura dos Scripts</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Arquivo</th><th>Função</th><th>Executar em</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>1-Setup-WSL-Samba.ps1</code></td><td>Configuração inicial do Windows (desativa SMB nativo, configura firewall)</td><td><strong>Windows (Admin)</strong></td></tr>
+                        <tr><td><code>2-setup-samba.sh</code></td><td>Instalação e configuração do Samba dentro do WSL</td><td><strong>WSL/Linux</strong></td></tr>
+                        <tr><td><code>Criar-Tarefa-Boot.ps1</code></td><td>Cria tarefa agendada para iniciar Samba no boot</td><td><strong>Windows (Admin)</strong></td></tr>
+                        <tr><td><code>Iniciar-Servidor.bat</code></td><td>Script batch que inicia o serviço e abre a pasta compartilhada</td><td><strong>Windows (qualquer)</strong></td></tr>
+                        <tr><td><code>valida-deploy.sh</code></td><td>Script de validação para verificar se tudo está funcionando</td><td><strong>WSL/Linux</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ⚠️ PERMISSÃO POWERSHELL - DESTAQUE -->
+        <div class="section">
+            <h2>⚡ PERMISSÃO PARA EXECUTAR SCRIPTS NO POWERSHELL</h2>
+            <div class="alert-warning" style="background: #7c2d12; border-left-color: #f97316;">
+                <strong>⚠️ ATENÇÃO:</strong> Antes de executar qualquer script <code>.ps1</code>, é necessário liberar a política de execução de scripts no PowerShell.
+            </div>
+            
+            <h3>🔧 Como liberar a execução de scripts:</h3>
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>Abra o <strong>PowerShell como Administrador</strong> (clique com botão direito no ícone e escolha "Executar como administrador")</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>Execute o comando abaixo para verificar a política atual:</div>
+            </div>
+            <pre><code>Get-ExecutionPolicy</code></pre>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>Libere a execução com a política <code>RemoteSigned</code> (recomendada para segurança):</div>
+            </div>
+            <pre><code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code></pre>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div>Confirme com <code>S</code> (Sim) quando solicitado. Para verificar se funcionou:</div>
+            </div>
+            <pre><code>Get-ExecutionPolicy
+# Saída esperada: RemoteSigned</code></pre>
+
+            <div class="alert-info">
+                <strong>💡 Alternativa (execução avulsa sem alterar política):</strong><br>
+                <code>powershell.exe -ExecutionPolicy Bypass -File ".\script.ps1"</code>
+            </div>
+
+            <h3>📋 Níveis de Política de Execução:</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Política</th><th>Descrição</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>Restricted</code></td><td>Nenhum script é executado (padrão do Windows)</td></tr>
+                        <tr><td><code>RemoteSigned</code></td><td>Scripts locais rodam; scripts baixados precisam de assinatura ✅ <strong>RECOMENDADO</strong></td></tr>
+                        <tr><td><code>AllSigned</code></td><td>Todos os scripts precisam ser assinados digitalmente</td></tr>
+                        <tr><td><code>Bypass</code></td><td>Nada é bloqueado, sem avisos (usar com cautela)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Guia de Instalação -->
+        <div class="section">
+            <h2>🚀 Guia de Instalação Passo a Passo</h2>
+            
+            <h3>Pré-requisitos</h3>
+            <ul style="margin-left: 2rem; margin-bottom: 1.5rem;">
+                <li>Windows 10/11 com <strong>WSL2</strong> instalado e configurado</li>
+                <li>Distribuição Linux no WSL (Ubuntu recomendado)</li>
+                <li>Acesso <strong>Administrador</strong> no Windows</li>
+                <li>Conexão com a internet para instalação de pacotes</li>
+            </ul>
+
+            <h3>Passo 1: Configuração do Windows (PowerShell como Admin)</h3>
+            <pre><code># Abra o PowerShell como Administrador e execute:
+.\1-Setup-WSL-Samba.ps1</code></pre>
+            <div class="alert-warning">
+                <strong>⚠️ Importante:</strong> Após executar este script, <strong>REINICIE O WINDOWS</strong> para garantir que as alterações nos drivers surtam efeito.
+            </div>
+
+            <h3>Passo 2: Configuração do Samba no WSL</h3>
+            <pre><code># Torne o script executável
+chmod +x 2-setup-samba.sh
+
+# Execute (substitua 'seu_usuario' pelo seu nome de usuário Linux)
+./2-setup-samba.sh seu_usuario</code></pre>
+
+            <h3>Passo 3: Criar a Tarefa de Inicialização Automática</h3>
+            <pre><code># No Windows (PowerShell como Administrador)
+.\Criar-Tarefa-Boot.ps1</code></pre>
+            <div class="alert-info">
+                <strong>📁 Importante:</strong> Certifique-se de que o arquivo <code>Iniciar-Servidor.bat</code> esteja no caminho <code>C:\TI\scripts\</code>
+            </div>
+
+            <h3>Passo 4: Validação da Instalação</h3>
+            <pre><code># No WSL
+chmod +x valida-deploy.sh
+./valida-deploy.sh</code></pre>
+            <div class="alert-success">✅ Resultado esperado: Todos os 6 testes devem retornar ✅</div>
+        </div>
+
+        <!-- Comandos úteis -->
+        <div class="section">
+            <h2>🛠️ Comandos Úteis do Dia a Dia</h2>
+            <div class="grid-2">
+                <div>
+                    <h3>Iniciar/Parar o Servidor</h3>
+                    <pre><code># No WSL (como root ou com sudo)
+sudo service smbd start
+sudo service nmbd start
+sudo service smbd stop
+sudo service smbd restart</code></pre>
+                </div>
+                <div>
+                    <h3>Verificar Status e Portas</h3>
+                    <pre><code>sudo service smbd status
+ss -tulpn | grep :445
+sudo netstat -tulnp | grep :445
+sudo tail -f /var/log/samba/log.smbd</code></pre>
+                </div>
+            </div>
+
+            <h3>Acessar o Compartilhamento</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Método</th><th>Comando/Caminho</th></tr></thead>
+                    <tbody>
+                        <tr><td>Explorador do Windows</td><td><code>\\127.0.0.1\compartilhado</code></td></tr>
+                        <tr><td>Mapear unidade de rede</td><td><code>net use Z: \\127.0.0.1\compartilhado</code></td></tr>
+                        <tr><td>De outro computador na rede</td><td><code>\\[IP_DO_HOST_WINDOWS]\compartilhado</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Gerenciar Usuários Samba</h3>
+            <pre><code># Adicionar novo usuário Samba
+sudo smbpasswd -a nome_usuario
+
+# Listar usuários Samba
+sudo pdbedit -L
+
+# Remover usuário
+sudo smbpasswd -x nome_usuario
+
+# Alterar senha
+sudo smbpasswd nome_usuario</code></pre>
+        </div>
+
+        <!-- Funcionalidade da Lixeira -->
+        <div class="section">
+            <h2>🗑️ Funcionalidade da Lixeira (Recycle Bin)</h2>
+            <div class="alert-info">
+                O Samba está configurado com suporte à lixeira através do módulo <code>vfs recycle</code>.
+            </div>
+            <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                <li>Arquivos deletados são movidos para a pasta <code>.lixeira</code> dentro do compartilhamento</li>
+                <li>A estrutura de diretórios é preservada (<code>keeptree = yes</code>)</li>
+                <li>Versões de arquivos são mantidas (<code>versions = yes</code>)</li>
+                <li>Arquivos temporários (<code>*.tmp, *.temp, ~$*</code>) são excluídos permanentemente</li>
+            </ul>
+            <pre><code># Para esvaziar a lixeira manualmente (no WSL)
+rm -rf /mnt/c/compartilhado/.lixeira/*</code></pre>
+        </div>
+
+        <!-- Fluxo de Inicialização -->
+        <div class="section">
+            <h2>🔄 Fluxo de Inicialização Completo</h2>
+            <div class="step"><div class="step-number">1</div><div>Windows Inicia</div></div>
+            <div class="step"><div class="step-number">2</div><div>Tarefa Agendada "WSL_Samba_Startup" aguarda 20 segundos (após logon)</div></div>
+            <div class="step"><div class="step-number">3</div><div>Executa <code>Iniciar-Servidor.bat</code></div></div>
+            <div class="step"><div class="step-number">4</div><div>.bat executa: <code>wsl -u root -e bash -c "service smbd start && service nmbd start"</code></div></div>
+            <div class="step"><div class="step-number">5</div><div>Samba inicia no WSL e assume a porta 445</div></div>
+            <div class="step"><div class="step-number">6</div><div>.bat abre automaticamente o explorador em <code>\\127.0.0.1\compartilhado</code></div></div>
+        </div>
+
+        <!-- Solução de Problemas -->
+        <div class="section">
+            <h2>🔧 Solução de Problemas</h2>
+            
+            <h3>❌ Porta 445 ainda ocupada pelo Windows</h3>
+            <pre><code># PowerShell como Administrador
+sc.exe config srvnet start= disabled
+sc.exe config srv2 start= disabled
+sc.exe stop srvnet
+sc.exe stop srv2
+# REINICIE O WINDOWS</code></pre>
+
+            <h3>❌ "Acesso negado" ao tentar acessar o compartilhamento</h3>
+            <pre><code># Verifique se o usuário Samba existe
+sudo pdbedit -L
+# Reconfigure a senha
+sudo smbpasswd -a seu_usuario
+# Verifique as permissões da pasta
+sudo chmod 777 /mnt/c/compartilhado</code></pre>
+
+            <h3>❌ Samba não inicia automaticamente após reinicializar</h3>
+            <pre><code># Windows - verifique a tarefa agendada
+Get-ScheduledTask -TaskName "WSL_Samba_Startup"
+# Teste manual do .bat
+C:\TI\scripts\Iniciar-Servidor.bat</code></pre>
+
+            <h3>❌ Não consigo acessar de outro computador na rede</h3>
+            <pre><code># Verifique as regras de firewall
+Get-NetFirewallRule -DisplayName "WSL Samba*" | Format-Table -AutoSize
+# Teste a conectividade
+Test-NetConnection -ComputerName [IP_DO_HOST] -Port 445</code></pre>
+        </div>
+
+        <!-- Segurança -->
+        <div class="section">
+            <h2>🛡️ Segurança e Boas Práticas</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Recomendação</th><th>Descrição</th></tr></thead>
+                    <tbody>
+                        <tr><td>Firewall</td><td>Apenas tráfego da rede local (<code>LocalSubnet</code>) é permitido</td></tr>
+                        <tr><td>Autenticação</td><td>Compartilhamento exige autenticação SMB (<code>guest ok = no</code>)</td></tr>
+                        <tr><td>Forçar usuário</td><td>Todos os acessos usam o mesmo usuário configurado</td></tr>
+                        <tr><td>Protocolo mínimo</td><td>SMB2 (SMB1 é inseguro e está desabilitado)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="alert-danger">
+                <strong>⚠️ Aviso:</strong> O Samba no WSL2 não deve ser exposto diretamente à internet. Use apenas em redes confiáveis.
+            </div>
+        </div>
+
+        <!-- Remoção Completa -->
+        <div class="section">
+            <h2>🗑️ Remoção Completa da Configuração</h2>
+            <pre><code># 1. Remover tarefa agendada (PowerShell Admin)
+Unregister-ScheduledTask -TaskName "WSL_Samba_Startup" -Confirm:$false
+
+# 2. Reabilitar SMB do Windows
+Set-Service LanmanServer -StartupType Automatic
+Start-Service LanmanServer
+sc.exe config srvnet start= auto
+sc.exe config srv2 start= auto
+
+# 3. Remover regras de firewall
+Get-NetFirewallRule -DisplayName "WSL Samba*" | Remove-NetFirewallRule
+
+# 4. Remover .wslconfig
+Remove-Item "$env:USERPROFILE\.wslconfig" -Force
+
+# 5. No WSL - desinstalar Samba
+sudo apt remove --purge samba samba-common-bin
+sudo rm -rf /etc/samba</code></pre>
+        </div>
+
+        <!-- Arquivos de Configuração -->
+        <div class="section">
+            <h2>📦 Arquivos de Configuração Importantes</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Arquivo</th><th>Localização</th><th>Descrição</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>.wslconfig</code></td><td><code>%USERPROFILE%\.wslconfig</code></td><td>Configura rede mirrored no WSL2</td></tr>
+                        <tr><td><code>wsl.conf</code></td><td><code>/etc/wsl.conf</code></td><td>Configurações de automount do WSL</td></tr>
+                        <tr><td><code>smb.conf</code></td><td><code>/etc/samba/smb.conf</code></td><td>Configuração principal do Samba</td></tr>
+                        <tr><td><code>Iniciar-Servidor.bat</code></td><td><code>C:\TI\scripts\</code></td><td>Script de boot do serviço</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Resumo dos Testes -->
+        <div class="section">
+            <h2>✅ Testes Realizados pelo Validador (<code>valida-deploy.sh</code>)</h2>
+            <ol style="margin-left: 2rem;">
+                <li>Serviço <code>LanmanServer</code> do Windows está desabilitado?</li>
+                <li>Drivers <code>srvnet</code> (PID 4) estão desabilitados?</li>
+                <li>Serviço Samba (<code>smbd</code>) está rodando no WSL?</li>
+                <li>Porta 445 está sendo ouvida pelo Samba no WSL?</li>
+                <li>Tarefa agendada existe e está configurada?</li>
+                <li>Pasta compartilhada existe?</li>
+            </ol>
+            <div class="alert-success" style="margin-top: 1rem;">
+                <strong>🎯 Resultado esperado:</strong> Todos os testes devem retornar <strong>✅ SIM</strong>
+            </div>
+        </div>
+
+        <div class="footer">
+            📄 Documentação do Serviço Samba no WSL2 | Versão 1.0<br>
+            Compatível com Windows 10/11 + WSL2 | Ubuntu 20.04/22.04/24.04 no WSL
+        </div>
+    </div>
+</body>
+</html>
